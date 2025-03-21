@@ -7,10 +7,7 @@ import { useEffect, useState } from "react";
 import Topics from "./Topics";
 import axios from "axios";
 import DOMPurify from 'dompurify';
-import { authOptions } from "@/app/api/auth/[...nextauth]/option";
-import { getServerSession } from 'next-auth';
 import Image from "next/image";
-
 
 interface Author {
     name: string
@@ -25,9 +22,7 @@ interface BLog {
 }
 
 export default function Dashboard({ profileImg, id }: { profileImg: string, id: string }) {
-    console.log("profileImg", profileImg)
-    console.log("id", id)
-    var { data: session } = useSession();
+    let { data: session } = useSession();
     const router = useRouter();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [profileImage, setProfileImage] = useState("https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg")
@@ -38,17 +33,17 @@ export default function Dashboard({ profileImg, id }: { profileImg: string, id: 
     }
 
     useEffect(() => {
-        console.log("akaksh  ====", session?.user.image)
-        if (!profileImg) {
-            setProfileImage(profileImage)
-        } else {
+        console.log("User profile image from session:", session?.user.image);
+
+        if (profileImg) {
             setProfileImage(profileImg);
+        } else if (session?.user.image) {
+            setProfileImage(session.user.image);
         }
 
-        console.log("number of blogs fetched ======", blogs.length);
+        console.log("Fetching blogs...");
         blogList();
-
-    }, [])
+    }, [profileImg, session?.user.image]);
 
     const blogList = async () => {
         try {

@@ -10,7 +10,7 @@ import { useEffect, useState } from "react"
 import { FaGithub, FaGoogle } from "react-icons/fa";
 
 export default function Signin() {
-    const { data: session, status } = useSession();
+    const { status } = useSession();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
@@ -49,7 +49,8 @@ export default function Signin() {
                 setError("Unexpected error. Please try again.");
             }
 
-        } catch (error: any) {
+        } catch (error) {
+            console.error("Signin error:", error);
             setError("Invalid credentials or server error")
         } finally {
             setIsLoading(false);
