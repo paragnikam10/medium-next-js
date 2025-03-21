@@ -9,6 +9,7 @@ import axios from "axios";
 import DOMPurify from 'dompurify';
 import { authOptions } from "@/app/api/auth/[...nextauth]/option";
 import { getServerSession } from 'next-auth';
+import Image from "next/image";
 
 
 interface Author {
@@ -99,7 +100,7 @@ export default function Dashboard({ profileImg, id }: { profileImg: string, id: 
                             </button>
 
                             <div className="relative">
-                                <img
+                                <Image
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                     src={profileImage}
                                     alt="Profile Picture"

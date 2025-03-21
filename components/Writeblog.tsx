@@ -1,19 +1,15 @@
 "use client"
 
-
 import axios from "axios";
-import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react"
-import { FiBell, FiCopy, FiFacebook, FiLinkedin, FiMoreHorizontal, FiTwitter, FiX } from "react-icons/fi";
+import { FiBell, FiCopy, FiFacebook, FiLinkedin, FiX } from "react-icons/fi";
 import 'react-quill/dist/quill.snow.css';
 
-
-
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
-
 
 export default function Writeblog() {
     const searchParams = useSearchParams();
@@ -24,7 +20,6 @@ export default function Writeblog() {
     const [showModal, setShowModal] = useState(false)
     const { data: session } = useSession();
     const router = useRouter()
-
 
     const handlePublish = async () => {
         console.log(session);
@@ -82,7 +77,7 @@ export default function Writeblog() {
                         >Publish</button>
                         <FiBell className="w-5 h-5" />
                         {profileImage && (
-                            <img
+                            <Image
                                 src={profileImage}
                                 alt="Profile Image"
                                 className="w-8 h-8 rounded-full"
@@ -111,8 +106,6 @@ export default function Writeblog() {
                         onChange={setContent}
 
                     />
-
-
 
                     {showModal && (
                         <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-100">
@@ -151,11 +144,6 @@ export default function Writeblog() {
                     )}
 
                 </div>
-
-
-
-
-
 
             </div>
         </div>
