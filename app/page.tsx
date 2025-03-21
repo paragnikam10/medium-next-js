@@ -1,6 +1,16 @@
+"use client"
 
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+ // console.log("home home home ==========")
+  const router = useRouter();
+
+  const handleGetStarted = async () => {
+    router.push("/signup")
+  }
+
+
   return (
     <div className="min-h-screen flex flex-col bg-purple-100">
       <nav className="bg-purple-100 border border-b-black">
@@ -13,9 +23,9 @@ export default function Home() {
             <div>
               <a href="#" className="text-black mr-5  font-serif">Our story</a>
               <a href="#" className="mr-5 font-serif">Membership</a>
-              <a href="#" className="mr-5 font-serif">Write</a>
-              <a href="#" className="mr-5 font-serif">Sign in</a>
-              <button className="font-serif text-white bg-black py-2 px-4  rounded-full  ">Get started</button>
+              <a href="/signup" className="mr-5 font-serif">Write</a>
+              <a href="/signin" className="mr-5 font-serif">Sign in</a>
+              <button onClick={handleGetStarted} className="font-serif text-white bg-black py-2 px-4  rounded-full  ">Get started</button>
             </div>
 
           </div>
@@ -28,7 +38,7 @@ export default function Home() {
           <div className="w-1/2 space-y-10">
             <h1 className="text-8xl font-bold font-charter ">  Human stories & ideas</h1>
             <p className="text-lg text-gray-700 ">A place to read, write, and deepen your understanding</p>
-            <button className="font-serif text-white bg-black rounded-full py-3 px-8 text-lg">Start reading</button>
+            <button onClick={handleGetStarted} className="font-serif text-white bg-black rounded-full py-3 px-8 text-lg">Start reading</button>
           </div>
 
           <div className="w-1/2 flex justify-end">
@@ -51,7 +61,7 @@ export default function Home() {
           <a href="#" className="hover:text-black">Text to speech</a>
           <a href="#" className="hover:text-black">Teams</a>
         </div>
-      </footer> 
+      </footer>
     </div>
   );
 }
