@@ -21,8 +21,8 @@ interface BLog {
     author: Author
 }
 
-export default function Dashboard({ profileImg, id }: { profileImg: string, id: string }) {
-    let { data: session } = useSession();
+export default function Dashboard({ profileImg }: { profileImg: string }) {
+    const { data: session } = useSession();
     const router = useRouter();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [profileImage, setProfileImage] = useState("https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg")

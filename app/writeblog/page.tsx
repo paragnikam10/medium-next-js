@@ -1,5 +1,5 @@
 import Writeblog from "@/components/Writeblog";
 
-export default function () {
+export default function WriteBlog () {
     return <Writeblog />
 }

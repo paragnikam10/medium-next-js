@@ -48,7 +48,7 @@ export default function Signup() {
             } else {
                 setError("Unexpected error. Please try again.");
             }
-        } catch (error: any) {
+        } catch (error) {
             console.error("Signup error:", error);
             setError("Error signing up. Please try again later.")
             
