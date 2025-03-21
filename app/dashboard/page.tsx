@@ -7,7 +7,7 @@ const getUserDetails = async () => {
     return session;
 };
 
-export default async function () {
+export default async function DashBoard () {
     const session = await getUserDetails()
     console.log("from dashboard", session?.user)
     const profileImg = session?.user.image || ""

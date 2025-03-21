@@ -21,7 +21,8 @@ interface BLog {
     author: Author
 }
 
-export default function Dashboard({ profileImg }: { profileImg: string }) {
+export default function Dashboard({ profileImg, id }: { profileImg: string, id: string }) {
+    console.log("id", id);
     const { data: session } = useSession();
     const router = useRouter();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
