@@ -3,14 +3,10 @@ import bcrypt from "bcryptjs";
 import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
 
-const SECRET_KEY = process.env.JWT_SECRET as string;
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { password, email, oauthProvider } = body;
-
-    //console.log("sign in request", body);
 
     if (oauthProvider) {
       const token = await getToken({ req });
@@ -86,10 +82,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({
+    return NextResponse.json(
+      {
       message: "Signed up successfully ",
       user: { id: user.id, email: user.email, name: user.name },
-    });
+    },
+    {status : 201}
+  );
   } catch (error) {
     console.error("Error signing in ", error);
     return NextResponse.json(

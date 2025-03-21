@@ -38,13 +38,16 @@ export default function Signin() {
                 email,
                 password
             })
-            console.log("response", response)
-            await signIn("credentials", {
-                email,
-                password,
-                redirect: false
-            })
-            router.push("/dashboard")
+            if (response.status === 201) {
+                await signIn("credentials", {
+                    email,
+                    password,
+                    redirect: false
+                });
+                router.push("/dashboard");
+            } else {
+                setError("Unexpected error. Please try again.");
+            }
 
         } catch (error: any) {
             setError("Invalid credentials or server error")

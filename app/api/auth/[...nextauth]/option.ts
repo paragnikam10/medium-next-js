@@ -1,16 +1,13 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
 import { Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { JWTPayload, SignJWT } from "jose";
-import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
-
 import bcrypt from "bcryptjs";
 
-// JWT Generation Helper
 const generateJWT = async (payload: JWTPayload) => {
   const secret = new TextEncoder().encode(process.env.JWT_SECRET || "secret");
 
@@ -23,8 +20,7 @@ const generateJWT = async (payload: JWTPayload) => {
   return jwt;
 };
 
-// NextAuth Configuration
-export const authOptions = {
+export const authOptions : NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -41,20 +37,22 @@ export const authOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials: any) {
-        // console.log("inside authorize");
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password are required");
+        }
 
         const user = await prisma.user.findFirst({
           where: {
             email: credentials.email,
           },
-          select: { id: true, name: true, password: true, email: true, },
+          select: { id: true, name: true, password: true, email: true },
         });
-        //  console.log("user line 58 auth", user);
+
         if (!user) {
           throw new Error("No user found with this email");
         }
-        //  console.log("user line 62 auth", user);
+
         const isValidPassword = await bcrypt.compare(
           credentials.password,
           user.password || ""
@@ -87,16 +85,17 @@ export const authOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account && account.provider === "credentials") {
-        //console.log("Credentials provider sign-in");
         return true;
       }
-      //console.log("user line 101", user, account, profile);
-      if (account && (account.provider === "google" || account.provider === "github")) {
-        console.log("inside signIn callback")
+      if (
+        account &&
+        (account.provider === "google" || account.provider === "github")
+      ) {
+        console.log("inside signIn callback");
         const email = profile?.email;
 
         let dbUser = await prisma.user.findUnique({
-          where: {  email },
+          where: { email },
         });
 
         if (!dbUser) {
@@ -112,26 +111,21 @@ export const authOptions = {
         console.log("userid line 124", user.id);
         return true;
       }
-
       return true;
     },
 
     async jwt({ token, user }: { token: JWT; user?: User }) {
-      //console.log("user line 94", user);
-      //console.log("token line 95", token);
-
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
         token.picture = user.image;
       }
-      console.log("token line 130",token)
+      console.log("token line 130", token);
       return token;
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {
-      //console.log("session line 138", session);
       if (session && session.user && token.id) {
         session.user.id = token.id;
         session.user.email = token.email;

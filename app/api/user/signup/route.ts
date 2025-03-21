@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       message: "You are signed up successfully",
+      user: { id: newUser.id, email: newUser.email, name: newUser.name },
     });
   } catch (error) {
     console.error("Erroe signing new user", error);

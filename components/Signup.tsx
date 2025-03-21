@@ -1,16 +1,10 @@
 "use client"
 
 import axios from "axios";
-
-import {  JwtPayload } from "jwt-decode";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react"
-
-interface CustomJwtPaylod extends JwtPayload {
-    profileImage: string;
-}
 
 export default function Signup() {
     console.log("inside sign up")
@@ -44,16 +38,16 @@ export default function Signup() {
                 profileImage: defaultProfileImage
             })
 
-           // console.log("=========", response)
-
-
-            await signIn("credentials", {
-                email,
-                password,
-                redirect: false
-            })
-            router.push("/dashboard")
-
+            if (response.status === 201) {
+                await signIn("credentials", {
+                    email,
+                    password,
+                    redirect: false
+                });
+                router.push("/dashboard");
+            } else {
+                setError("Unexpected error. Please try again.");
+            }
         } catch (error: any) {
             setError("Error signing up. Please try again later.")
             
