@@ -11,9 +11,14 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
+      <head>
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description} />
+      </head>
       <Providers>
         <body>{children}</body>
       </Providers>
     </html>
   );
 }
+
