@@ -1,15 +1,15 @@
 "use client"
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
- // console.log("home home home ==========")
+ 
   const router = useRouter();
 
   const handleGetStarted = async () => {
     router.push("/signup")
   }
-
 
   return (
     <div className="min-h-screen flex flex-col bg-purple-100">
@@ -42,7 +42,7 @@ export default function Home() {
           </div>
 
           <div className="w-1/2 flex justify-end">
-            <img src="https://miro.medium.com/v2/format:webp/4*SdjkdS98aKH76I8eD0_qjw.png" className="w-full h-[592px] max-w-none md:max-w-[calc(100vh-9.1rem)] object-contain"></img>
+            <Image alt="main image" src="https://miro.medium.com/v2/format:webp/4*SdjkdS98aKH76I8eD0_qjw.png" className="w-full h-[592px] max-w-none md:max-w-[calc(100vh-9.1rem)] object-contain"></Image>
           </div>
 
         </div>
