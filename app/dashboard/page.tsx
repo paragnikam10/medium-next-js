@@ -1,11 +1,9 @@
-"use client"
 
 import Dashboard from "@/components/Dashboard";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/option";
+import { auth } from "@/lib/auth";
 
 export default async function DashBoardPage() {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session || !session.user) {
         return <p>Please sign in to access the dashboard.</p>;

@@ -100,6 +100,7 @@ export default function Dashboard({ profileImg, id }: { profileImg: string, id: 
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                     src={profileImage}
                                     alt="Profile Picture"
+                                    fill
                                     className="w-8 h-8 rounded-full"
                                 />
 
