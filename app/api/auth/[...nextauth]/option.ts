@@ -1,26 +1,28 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
-import { Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
-import { JWTPayload, SignJWT } from "jose";
+import { SignJWT } from "jose";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import bcrypt from "bcryptjs";
 
-const generateJWT = async (payload: JWTPayload) => {
-  const secret = new TextEncoder().encode(process.env.JWT_SECRET || "secret");
+// Function to generate JWT manually
+const generateJWT = async (payload: Record<string, unknown>) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("Missing JWT_SECRET environment variable");
+  }
 
-  const jwt = await new SignJWT(payload)
+  const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+
+  return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("365d")
     .sign(secret);
-
-  return jwt;
 };
 
-export const authOptions : NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -31,6 +33,7 @@ export const authOptions : NextAuthOptions = {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
+
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -42,10 +45,8 @@ export const authOptions : NextAuthOptions = {
           throw new Error("Email and password are required");
         }
 
-        const user = await prisma.user.findFirst({
-          where: {
-            email: credentials.email,
-          },
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
           select: { id: true, name: true, password: true, email: true },
         });
 
@@ -66,17 +67,10 @@ export const authOptions : NextAuthOptions = {
 
         await prisma.user.update({
           where: { id: user.id },
-          data: {
-            token: jwt,
-          },
+          data: { token: jwt },
         });
 
-        return {
-          id: user.id,
-          name: user.name || "",
-          email: credentials.email,
-          token: jwt,
-        };
+        return { id: user.id, name: user.name || "", email: user.email };
       },
     }),
   ],
@@ -84,66 +78,64 @@ export const authOptions : NextAuthOptions = {
 
   callbacks: {
     async signIn({ user, account, profile }) {
-      if (account && account.provider === "credentials") {
-        return true;
-      }
-      if (
-        account &&
-        (account.provider === "google" || account.provider === "github")
-      ) {
-        console.log("inside signIn callback");
+      if (account?.provider === "credentials") return true;
+
+      if (account?.provider === "google" || account?.provider === "github") {
         const email = profile?.email;
 
-        let dbUser = await prisma.user.findUnique({
-          where: { email },
-        });
+        if (!email) throw new Error("No email provided");
+
+        let dbUser = await prisma.user.findUnique({ where: { email } });
 
         if (!dbUser) {
           dbUser = await prisma.user.create({
             data: {
-              name: user.name,
-              email: user.email,
-              image: user.image,
+              name: user.name || "",
+              email,
+              image: user.image || "",
             },
           });
         }
+
         user.id = dbUser.id;
-        console.log("userid line 124", user.id);
         return true;
       }
-      return true;
+
+      return false;
     },
 
-    async jwt({ token, user }: { token: JWT; user?: User }) {
+    async jwt({ token, user }) {
       if (user) {
-        token.id = user.id as string;
-        token.email = user.email;
-        token.name = user.name;
-        token.picture = user.image;
+        return {
+          ...token,
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          picture: user.image,
+        };
       }
-      console.log("token line 130", token);
       return token;
     },
 
-    async session({ session, token }: { session: Session; token: JWT }) {
-      if (session && session.user && token.id) {
-        session.user.id = token.id as string;
-        session.user.email = token.email;
-        session.user.name = token.name;
-        session.user.image = token.picture;
-      }
-      console.log("session line 146", session);
-      return session;
+    async session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          id: token.id,
+          email: token.email,
+          name: token.name,
+          image: token.picture,
+        },
+      };
     },
   },
-  session: {
-    strategy: "jwt",
-  },
+
+  session: { strategy: "jwt" },
 
   pages: {
     signIn: "/signin",
   },
-  debug: true,
-} satisfies NextAuthOptions;
+  debug: process.env.NODE_ENV === "development",
+};
 
 export default NextAuth(authOptions);
