@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
- 
+
   const router = useRouter();
 
   const handleGetStarted = async () => {
@@ -42,7 +42,12 @@ export default function Home() {
           </div>
 
           <div className="w-1/2 flex justify-end">
-            <Image alt="main image" src="https://miro.medium.com/v2/format:webp/4*SdjkdS98aKH76I8eD0_qjw.png" className="w-full h-[592px] max-w-none md:max-w-[calc(100vh-9.1rem)] object-contain"></Image>
+            <Image
+              alt="main image"
+              src="https://miro.medium.com/v2/format:webp/4*SdjkdS98aKH76I8eD0_qjw.png"
+              width={800}
+              height={592}
+              className="w-full h-[592px] max-w-none md:max-w-[calc(100vh-9.1rem)] object-contain"></Image>
           </div>
 
         </div>

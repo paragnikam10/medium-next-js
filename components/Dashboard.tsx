@@ -48,7 +48,7 @@ export default function Dashboard({ profileImg, id }: { profileImg: string, id: 
 
     const blogList = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/blogs/blog");
+            const response = await axios.get("/api/blogs/blog");
             setBlogs(response.data)
             console.log(response.data.length)
         } catch (error) {

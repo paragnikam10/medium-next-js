@@ -33,7 +33,7 @@ export default function Writeblog() {
 
 
         try {
-            const response = await axios.post("http://localhost:3000/api/blogs/saveblog", {
+            const response = await axios.post("/api/blogs/saveblog", {
                 title,
                 content,
                 userId
